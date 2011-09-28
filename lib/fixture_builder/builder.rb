@@ -64,7 +64,7 @@ module FixtureBuilder
     end
 
     def say(*messages)
-      puts messages.map { |message| "=> #{message}" }
+      puts messages.map { |message| "=> #{message}" } unless ENV["TEST"]
     end
 
     def dump_empty_fixtures_for_all_tables

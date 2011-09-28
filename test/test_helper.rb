@@ -2,6 +2,7 @@ require 'rubygems'
 require 'bundler/setup'
 require 'test/unit'
 require 'fixture_builder'
+ENV["TEST"] = "true"
 
 class Rails
   def self.root
