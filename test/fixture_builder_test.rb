@@ -1,6 +1,5 @@
 require File.expand_path(File.join(File.dirname(__FILE__), 'test_helper'))
 
-
 class Model
   def self.table_name
     'models'
@@ -8,6 +7,12 @@ class Model
 end
 
 class FixtureBuilderTest < Test::Unit::TestCase
+  def setup
+    create_and_blow_away_old_db
+    delete_test_generated_yml_files
+    force_fixture_generation
+  end
+
   def teardown
     FixtureBuilder.instance_variable_set(:'@configuration', nil)
   end

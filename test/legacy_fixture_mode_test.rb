@@ -3,6 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'test_helper'))
 class LegacyFixtureModeTest < Test::Unit::TestCase
   def setup
     create_and_blow_away_old_db
+    delete_test_generated_yml_files
     force_fixture_generation
   end
 
@@ -12,7 +13,7 @@ class LegacyFixtureModeTest < Test::Unit::TestCase
 
   def test_load_legacy_fixtures
     FixtureBuilder.configure do |fbuilder|
-      fbuilder.legacy_fixtures = Dir[test_path("legacy_fixtures/*.yml"), test_path("other_legacy_fixture_set/*.yml")] 
+      fbuilder.legacy_fixtures = Dir[test_path("legacy_fixtures/*.yml"), test_path("other_legacy_fixture_set/*.yml")]
       fbuilder.factory do
       end
     end
@@ -31,11 +32,12 @@ class LegacyFixtureModeTest < Test::Unit::TestCase
 
   def test_new_and_old_fixtures
     FixtureBuilder.configure do |fbuilder|
-      fbuilder.legacy_fixtures = Dir[test_path("legacy_fixtures/*.yml"), test_path("other_legacy_fixture_set/*.yml")] 
+      fbuilder.legacy_fixtures = Dir[test_path("legacy_fixtures/*.yml"), test_path("other_legacy_fixture_set/*.yml")]
       fbuilder.factory do
         MagicalCreature.create :name => "Barry", :species => "Party Guy"
       end
     end
     assert_equal 4, MagicalCreature.all.size
   end
+
 end

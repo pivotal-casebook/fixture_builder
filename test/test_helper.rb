@@ -42,3 +42,8 @@ def force_fixture_generation
   rescue
   end
 end
+
+def delete_test_generated_yml_files
+  Dir[test_path("fixtures/*.yml")].each { |file| FileUtils.rm(file) }
+end
+
