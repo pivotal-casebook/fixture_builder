@@ -45,4 +45,13 @@ class FixtureBuilderTest < Test::Unit::TestCase
   def test_fixtures_dir
     assert_match /test\/fixtures$/, FixtureBuilder.configuration.send(:fixtures_dir).to_s
   end
+
+  def test_skip_generation_of_empty_fixtures
+    FixtureBuilder.configure do |fbuilder|
+      fbuilder.dump_empty_fixtures = false
+      fbuilder.factory do
+      end
+    end
+    assert_false File.exist?(test_path("fixtures/table_with_no_model.yml"))
+  end
 end

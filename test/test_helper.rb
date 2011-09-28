@@ -34,6 +34,9 @@ def create_and_blow_away_old_db
     t.column :name, :string
     t.column :species, :string
   end
+
+  ActiveRecord::Base.connection.create_table(:table_with_no_model, :force => true) do |t|
+  end
 end
 
 def force_fixture_generation

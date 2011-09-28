@@ -3,5 +3,5 @@ pkg/
 .idea/*
 *.db
 tmp/fixture_builder.yml
-test/fixtures/magical_creatures.yml
+test/fixtures/*.yml
 Gemfile.lock
