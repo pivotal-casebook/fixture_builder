@@ -69,7 +69,16 @@ module FixtureBuilder
 
     def dump_empty_fixtures_for_all_tables
       tables.each do |table_name|
-        write_fixture_file({}, table_name)
+        write_fixture_file({}, find_class_from_table_name(table_name) || table_name)
+      end
+    end
+
+    def find_class_from_table_name(table_name)
+      begin
+        return fixture_classes[table_name] if fixture_classes.has_key?(table_name)
+        table_name.classify.constantize
+      rescue NameError
+        nil
       end
     end
 
@@ -78,7 +87,7 @@ module FixtureBuilder
       Date::DATE_FORMATS[:default] = Date::DATE_FORMATS[:db]
       begin
         fixtures = tables.inject([]) do |files, table_name|
-          table_klass = table_name.classify.constantize rescue nil
+          table_klass = find_class_from_table_name(table_name)
           if table_klass
             rows = table_klass.all.collect(&:attributes)
           else
@@ -91,9 +100,9 @@ module FixtureBuilder
             hash.merge(record_name(record, table_name, row_index) => record)
           end
 
-          write_fixture_file fixture_data, table_name
+          write_fixture_file fixture_data, table_klass
 
-          files + [File.basename(fixture_file(table_name))]
+          files + [File.basename(fixture_file(table_klass))]
         end
       ensure
         Date::DATE_FORMATS[:default] = default_date_format
@@ -101,13 +110,19 @@ module FixtureBuilder
       say "Built #{fixtures.to_sentence}"
     end
 
-    def write_fixture_file(fixture_data, table_name)
-      File.open(fixture_file(table_name), 'w') do |file|
+    def write_fixture_file(fixture_data, table_klass)
+      FileUtils.mkdir_p File.dirname(fixture_file(table_klass))
+      File.open(fixture_file(table_klass), 'w') do |file|
         file.write fixture_data.to_yaml
       end
     end
 
-    def fixture_file(table_name)
+    def fixture_file(table_klass_or_name)
+      if table_klass_or_name.respond_to?(:table_name)
+        table_name = table_klass_or_name.name.underscore.pluralize
+      else
+        table_name = table_klass_or_name
+      end
       fixtures_dir("#{table_name}.yml")
     end
   end

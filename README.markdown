@@ -69,6 +69,7 @@ There are also additional configuration options that can be changed to override 
  * select_sql: sql string to use for select
  * delete_sql: sql string to use for deletes
  * dump_empty_fixtures: boolean to determine whether or not to dump empty tables to fixtures
+ * fixture_classes: hash containing keys for table names pointing to classes. Useful for namespaced models.
 
 By default these are set as:
 
@@ -79,6 +80,7 @@ By default these are set as:
  * select_sql: SELECT * FROM %s
  * delete_sql: DELETE FROM %s
  * dump_empty_fixtures: true
+ * fixture_classes: {}
 
 Sequence Collisions
 ===================

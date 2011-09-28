@@ -54,4 +54,22 @@ class FixtureBuilderTest < Test::Unit::TestCase
     end
     assert_false File.exist?(test_path("fixtures/table_with_no_model.yml"))
   end
+
+  def test_generation_of_namespaced_fixtures
+    FixtureBuilder.configure do |fbuilder|
+      fbuilder.files_to_check += [__FILE__]
+      fbuilder.fixture_classes = {
+        "mythical_creatures" => Mythical::Creature,
+        "mythical_creature_unicorns" => Mythical::Creature::Unicorn
+      }
+      fbuilder.factory do
+        Mythical::Creature.create!(:name => "gooddeveloper")
+        Mythical::Creature::Unicorn.create!(:name => "bob")
+      end
+    end
+    assert_true File.exist?(test_path("fixtures/mythical/creatures.yml"))
+    assert_true File.exist?(test_path("fixtures/mythical/creature/unicorns.yml"))
+    mythical_creatures = YAML.load(File.open(test_path("fixtures/mythical/creatures.yml")))
+    assert_equal "gooddeveloper", mythical_creatures["gooddeveloper"]["name"]
+  end
 end
