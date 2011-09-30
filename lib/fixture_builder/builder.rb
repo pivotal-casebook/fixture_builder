@@ -100,9 +100,11 @@ module FixtureBuilder
             hash.merge(record_name(record, table_name, row_index) => record)
           end
 
-          write_fixture_file fixture_data, table_klass
+          table_klass_or_name = table_klass || table_name
 
-          files + [File.basename(fixture_file(table_klass))]
+          write_fixture_file fixture_data, table_klass_or_name
+
+          files + [File.basename(fixture_file(table_klass_or_name))]
         end
       ensure
         Date::DATE_FORMATS[:default] = default_date_format
@@ -110,9 +112,9 @@ module FixtureBuilder
       say "Built #{fixtures.to_sentence}"
     end
 
-    def write_fixture_file(fixture_data, table_klass)
-      FileUtils.mkdir_p File.dirname(fixture_file(table_klass))
-      File.open(fixture_file(table_klass), 'w') do |file|
+    def write_fixture_file(fixture_data, table_klass_or_name)
+      FileUtils.mkdir_p File.dirname(fixture_file(table_klass_or_name))
+      File.open(fixture_file(table_klass_or_name), 'w') do |file|
         file.write fixture_data.to_yaml
       end
     end

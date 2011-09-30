@@ -72,4 +72,15 @@ class FixtureBuilderTest < Test::Unit::TestCase
     mythical_creatures = YAML.load(File.open(test_path("fixtures/mythical/creatures.yml")))
     assert_equal "gooddeveloper", mythical_creatures["gooddeveloper"]["name"]
   end
+
+  def test_generation_of_modelless_table_fixtures
+    FixtureBuilder.configure do |fbuilder|
+      fbuilder.files_to_check += [__FILE__]
+      fbuilder.dump_empty_fixtures = false
+      fbuilder.factory do
+        ActiveRecord::Base.connection.insert("INSERT INTO table_with_no_model(name) VALUES('jim')")
+      end
+    end
+    assert_true File.exist?(test_path("fixtures/table_with_no_model.yml"))
+  end
 end

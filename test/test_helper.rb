@@ -33,7 +33,6 @@ module Mythical
   end
 end
 
-
 def create_and_blow_away_old_db
   ActiveRecord::Base.configurations['test'] = {
       'adapter' => 'sqlite3',
@@ -47,6 +46,7 @@ def create_and_blow_away_old_db
   end
 
   ActiveRecord::Base.connection.create_table(:table_with_no_model, :force => true) do |t|
+    t.column :name, :string
   end
 
   ActiveRecord::Base.connection.create_table(:mythical_creatures, :force => true) do |t|
