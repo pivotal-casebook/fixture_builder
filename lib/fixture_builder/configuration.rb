@@ -78,7 +78,10 @@ module FixtureBuilder
     end
 
     def tables
-      ActiveRecord::Base.connection.tables - skip_tables
+      ActiveRecord::Base.connection.tables.reject do |table|
+        skip_tables.include?(table) ||
+          skip_tables.any? { |skip_table| skip_table =~ table if skip_table.is_a? Regexp }
+      end
     end
 
     def fixtures_dir(path = '')
